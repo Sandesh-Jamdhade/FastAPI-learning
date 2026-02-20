@@ -1,10 +1,9 @@
 from fastapi import FastAPI
-from app.routes import user_routes
 from pydantic import BaseModel
 from typing import Optional
 
 app = FastAPI()
-Students={
+students={
     1:{
         "name":"Sandesh",
         "age":21,
@@ -20,7 +19,7 @@ def root():
 
 @app.get("/get-student/{student_id}")
 def get_student(student_id:int):
-    return Students[student_id]
+    return students[student_id]
 
 #Create New Student
 class Student(BaseModel):
@@ -30,12 +29,28 @@ class Student(BaseModel):
 
 @app.post("/create-student/{student_id}")
 def create_student(student_id: int, student: Student):
-    if student_id in Students:
+    if student_id in students:
         return {"Error": "Already Exists"}
 
-    Students[student_id] = student
+    students[student_id] = student
     return {"message": "Student created"}
 
+#Update Existing Student
+class UpdateStudent(BaseModel):
+    name:Optional[str]=None
+    age:Optional[int]=None
+    Degree:Optional[str]=None
 
+@app.put("/update-student/{student_id}")
+def update_student(student_id:int,student:UpdateStudent):
+    if student_id not in students:
+        return{"Data":"Not Exist"}
+    if student.name!=None:
+        students[student_id].name=student.name
+    if student.age!=None:
+        students[student_id].age=student.age
+    if student.Degree!=None:
+        students[student_id].Degree=student.Degree
+    return students[student_id]
 
 
