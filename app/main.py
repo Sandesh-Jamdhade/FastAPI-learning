@@ -11,10 +11,6 @@ students={
     }
 }
 
-@app.get("/")
-def root():
-    return {"message": "API is running"}
-
 #Fetching the Data of the user
 
 @app.get("/get-student/{student_id}")
@@ -53,4 +49,11 @@ def update_student(student_id:int,student:UpdateStudent):
         students[student_id].Degree=student.Degree
     return students[student_id]
 
+#Deleting Student
+@app.delete("/delete-student/{student_id}")
+def delete_student(student_id:int):
+    if student_id not in students:
+        return{"Id":"Not Exist"}
+    del students[student_id]
+    return{"Message":"Student deleted"}
 
