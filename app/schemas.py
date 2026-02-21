@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from datetime import datetime
 
 class MovieCreate(BaseModel):
     title: str
@@ -7,8 +8,8 @@ class MovieCreate(BaseModel):
 
 class ShowCreate(BaseModel):
     movie_id: int
-    show_time: str
-
+    start_time: datetime
+    end_time: datetime
 
 class SeatCreate(BaseModel):
     show_id: int
@@ -18,3 +19,11 @@ class SeatCreate(BaseModel):
 class BookingCreate(BaseModel):
     user_name: str
     seat_id: int
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+class LoginSchema(BaseModel):
+    username: str
+    password: str
