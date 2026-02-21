@@ -24,8 +24,7 @@ class Seat(Base):
     __tablename__ = "seats"
 
     id = Column(Integer, primary_key=True, index=True)
-    show_id = Column(Integer, ForeignKey("shows.id"))
-    seat_number = Column(Integer)
+    seat_number = Column(String, unique=True, index=True) 
     is_booked = Column(Boolean, default=False)
 
 
