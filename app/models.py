@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, UniqueConstraint
+from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, UniqueConstraint, DateTime
 from .database import Base
 
 class Movie(Base):
@@ -17,7 +17,8 @@ class Show(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     movie_id = Column(Integer, ForeignKey("movies.id"))
-    show_time = Column(String)
+    start_time = Column(DateTime)
+    end_time = Column(DateTime)
 
 
 class Seat(Base):
@@ -34,3 +35,10 @@ class Booking(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_name = Column(String)
     seat_id = Column(Integer, ForeignKey("seats.id"))
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True)
+    password = Column(String)
