@@ -12,6 +12,7 @@ def get_db():
     finally:
         db.close()
 
+#Create seats
 @router.post("/")
 def create_seat(seat_number: str, db: Session = Depends(get_db)):
 
