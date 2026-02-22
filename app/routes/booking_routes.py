@@ -43,3 +43,19 @@ def book_seat(
     return {
         "message": f"Seat booked successfully by {user}"
     }
+
+@router.delete("/booking/{booking_id}")
+def delete_booking(booking_id: int, db: Session = Depends(get_db)):
+
+    booking = db.query(Booking).filter(Booking.id == booking_id).first()
+
+    if not booking:
+        raise HTTPException(404, "Booking not found")
+    seat = db.query(Seat).filter(Seat.id == booking.seat_id).first()
+    if seat:
+        seat.is_booked = False
+
+    db.delete(booking)
+    db.commit()
+
+    return {"message": "Booking cancelled and seat released"}
