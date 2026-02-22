@@ -27,3 +27,7 @@ class UserCreate(BaseModel):
 class LoginSchema(BaseModel):
     username: str
     password: str
+
+class SeatLock(BaseModel):
+    show_id: int
+    seat_id: int
