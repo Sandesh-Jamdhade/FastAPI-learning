@@ -6,6 +6,7 @@ from ..schemas import ShowCreate
 
 router = APIRouter(prefix="/shows", tags=["Shows"])
 
+
 def get_db():
     db = SessionLocal()
     try:
@@ -16,9 +17,13 @@ def get_db():
 
 @router.post("/")
 def create_show(show: ShowCreate, db: Session = Depends(get_db)):
+
     db_show = Show(**show.dict())
+
     db.add(db_show)
     db.commit()
+    db.refresh(db_show)
+
     return db_show
 
 
@@ -26,15 +31,16 @@ def create_show(show: ShowCreate, db: Session = Depends(get_db)):
 def list_shows(db: Session = Depends(get_db)):
     return db.query(Show).all()
 
-@router.delete("/shows/{show_id}")
+
+@router.delete("/{show_id}")
 def delete_show(show_id: int, db: Session = Depends(get_db)):
 
     show = db.query(Show).filter(Show.id == show_id).first()
 
     if not show:
-        raise HTTPException(404, "Show not found")
+        raise HTTPException(status_code=404, detail="Show not found")
 
     db.delete(show)
     db.commit()
 
-    return {"message": "Show deleted"}
+    return {"message": "Show deleted successfully"}
