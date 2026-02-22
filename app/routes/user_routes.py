@@ -1,11 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.security import OAuth2PasswordRequestForm
 from ..database import SessionLocal
 from ..models import User
-from ..schemas import UserCreate, LoginSchema
+from ..schemas import UserCreate
 from ..auth import hash_password, verify_password, create_access_token
+from ..redis_client import r
+from ..auth_dependency import oauth2_scheme
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
+
 
 def get_db():
     db = SessionLocal()
@@ -13,6 +17,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 @router.post("/register")
 def register(user: UserCreate, db: Session = Depends(get_db)):
@@ -30,7 +35,6 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
 
     return {"message": "User registered successfully"}
 
-from fastapi.security import OAuth2PasswordRequestForm
 
 @router.post("/login")
 def login(
@@ -52,3 +56,11 @@ def login(
         "access_token": token,
         "token_type": "bearer"
     }
+
+
+@router.post("/logout")
+def logout(token: str = Depends(oauth2_scheme)):
+
+    r.setex(f"blacklist:{token}", 7200, "true")
+
+    return {"message": "Logged out successfully"}
