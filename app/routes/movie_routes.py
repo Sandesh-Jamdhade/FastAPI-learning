@@ -32,3 +32,16 @@ def create_movie(movie: MovieCreate, db: Session = Depends(get_db)):
 @router.get("/")
 def list_movies(db: Session = Depends(get_db)):
     return db.query(Movie).all()
+
+@router.delete("/movies/{movie_id}")
+def delete_movie(movie_id: int, db: Session = Depends(get_db)):
+
+    movie = db.query(Movie).filter(Movie.id == movie_id).first()
+
+    if not movie:
+        raise HTTPException(status_code=404, detail="Movie not found")
+
+    db.delete(movie)
+    db.commit()
+
+    return {"message": "Movie deleted successfully"}
