@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import SessionLocal
 from ..models import Show
@@ -25,3 +25,16 @@ def create_show(show: ShowCreate, db: Session = Depends(get_db)):
 @router.get("/")
 def list_shows(db: Session = Depends(get_db)):
     return db.query(Show).all()
+
+@router.delete("/shows/{show_id}")
+def delete_show(show_id: int, db: Session = Depends(get_db)):
+
+    show = db.query(Show).filter(Show.id == show_id).first()
+
+    if not show:
+        raise HTTPException(404, "Show not found")
+
+    db.delete(show)
+    db.commit()
+
+    return {"message": "Show deleted"}
